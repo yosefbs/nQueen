@@ -10,8 +10,11 @@ def main():
     b.moveQueenToNode(2, 3, 3)
     b.moveQueenToNode(3, 4, 4)
     b.printBorad()
-    b.nodes[(3,3)].printNode()
-    b.queens[0].printQueen()
+    b.queens[3].printQueen()
+
+    b.moveQueenToNode(3, 2, 7)
+    b.printBorad()
+    b.queens[3].printQueen()
 
 if __name__ == '__main__':
     main()

@@ -45,7 +45,7 @@ class Borad:
         c = q.location[1]
         for i in range(0, self.n):
             self.nodes[(r, i)].addAttacker(q)
-            if (i != r):
+            if i != r:
                 self.nodes[(i, c)].addAttacker(q)
 
         tempR = r + 1
@@ -85,34 +85,35 @@ class Borad:
         r = q.location[0]
         c = q.location[1]
         for i in range(0, self.n):
-            self.nodes[(r, i)].attackableBy.remove(q)
-            self.nodes[(i, c)].attackableBy.remove(q)
+            self.nodes[(r, i)].removeAttacker(q)
+            if i != r:
+                self.nodes[(i, c)].removeAttacker(q)
 
         tempR = r + 1
         tempC = c + 1
         while (tempR < self.n) and (tempC < self.n):
-            self.nodes[(tempR, tempC)].attackableBy.remove(q)
+            self.nodes[(tempR, tempC)].removeAttacker(q)
             tempR += 1
             tempC += 1
 
         tempR = r - 1
         tempC = c - 1
         while (tempR > -1) and (tempC > -1):
-            self.nodes[(tempR, tempC)].attackableBy.remove(q)
+            self.nodes[(tempR, tempC)].removeAttacker(q)
             tempR -= 1
             tempC -= 1
 
         tempR = r + 1
         tempC = c - 1
         while (tempR < self.n) and (tempC > -1):
-            self.nodes[(tempR, tempC)].attackableBy.remove(q)
+            self.nodes[(tempR, tempC)].removeAttacker(q)
             tempR += 1
             tempC -= 1
 
         tempR = r - 1
         tempC = c + 1
         while (tempR > -1) and (tempC < self.n):
-            self.nodes[(tempR, tempC)].attackableBy.remove(q)
+            self.nodes[(tempR, tempC)].removeAttacker(q)
             tempR -= 1
             tempC += 1
 
@@ -124,11 +125,12 @@ class Borad:
             q = self.queens[i]
             if q.location[0] != -1:
                 occupiedNodes[q.location] = q.id
-        for i in range(0, self.n * 4):
-            print('-', end='')
-        print()
+        print('-', end='')
+        for i in range(0, self.n):
+            print('--'+str(i)+'-', end='')
+        print('-')
         for r in range(0, self.n):
-            print('|', end='')
+            print(str(r)+'|', end='')
             for c in range(0, self.n):
                 if (r, c) in occupiedNodes:
                     print(' X |', end='')
@@ -149,6 +151,11 @@ class BoradNode:
         if len(self.attackableBy) == 1:
             self.attackableBy[0].uniqueAttackableNode.remove(self)
         self.attackableBy.append(queen)
+
+    def removeAttacker(self, queen):
+        self.attackableBy.remove(queen)
+        if len(self.attackableBy) == 1:
+            self.attackableBy[0].uniqueAttackableNode.add(self)
 
     def printNode(self):
         print('Node: ({0},{1}) controled by queens:'.format(self.rowId, self.colId))

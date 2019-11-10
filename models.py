@@ -161,5 +161,6 @@ class BoradNode:
         print('Node: ({0},{1}) controled by queens:'.format(self.rowId, self.colId))
         print(*self.attackableBy)
 
+
     def __str__(self):
         return ('({0},{1}) '.format(self.rowId, self.colId))

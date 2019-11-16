@@ -1,14 +1,15 @@
 from collections import Set
 
 
+
 class Queen:
     def __init__(self, id):
         self.id = id
         self.uniqueAttackableNode = []
-        self.location = (-1, -1)
+        self.location = NodeLocation(-1, -1)
 
     def setLocation(self, r, c):
-        self.location = (r, c)
+        self.location = NodeLocation(r,c)
 
     def __str__(self):
         return 'Q {0} at: ({1},{2}).'.format(self.id, self.location[0], self.location[1])
@@ -41,8 +42,7 @@ class Queen:
 
 class BoardNode:
     def __init__(self, rowId, colId):
-        self.rowId = rowId
-        self.colId = colId
+        self.location = NodeLocation(rowId, colId)
         self.attackableBy = []
 
     def addAttacker(self, queen):
@@ -58,9 +58,18 @@ class BoardNode:
             self.attackableBy[0].uniqueAttackableNode.append(self)
 
     def printNode(self):
-        print('Node: ({0},{1}) controled by queens:'.format(self.rowId, self.colId))
+        print('Node: ({0},{1}) controled by queens:'.format(self.location.rowId, self.location.colId))
         print(*self.attackableBy)
 
 
     def __str__(self):
         return ('({0},{1}) '.format(self.rowId, self.colId))
+
+class NodeLocation:
+    def __init__(self, rowId, colId):
+        self.rowId = rowId
+        self.colId = colId
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        return (self.colId==other.colId) and (self.rowId==other.rowId)

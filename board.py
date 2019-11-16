@@ -7,6 +7,7 @@ class Board:
         self.nodes = {}
         self.queens = {}
         self.n = n
+        self.moveCounter=0
         for r in range(0, n):
             for c in range(0, n):
                 key = (r, c)
@@ -15,15 +16,17 @@ class Board:
                 self.freeNodes.append(newNode)
             self.queens[r] = Queen(r)
 
+
     def moveQueenToNode(self, queenId, rowId, colId):
         self.leaveNode(queenId)
         self.queens[queenId].setLocation(rowId, colId)
+        self.moveCounter += 1
         self.updateBoardAttackMap(queenId)
 
     def updateBoardAttackMap(self, queenId):
         q = self.queens[queenId]
-        r = q.location[0]
-        c = q.location[1]
+        r = q.location.rowId
+        c = q.location.colId
         for i in range(0, self.n):
             self.setNodeAttacker(r, i, q)
             if i != r:
@@ -67,14 +70,14 @@ class Board:
 
     def leaveNode(self, queenId):
         q = self.queens[queenId]
-        if q.location == (-1, -1):
+        if q.location == NodeLocation(-1, -1):
             return
-
+        self.moveCounter+= 1
         for node in q.uniqueAttackableNode:
             self.freeNodes.append(node)
         q.uniqueAttackableNode = []
-        r = q.location[0]
-        c = q.location[1]
+        r = q.location.rowId
+        c = q.location.colId
         for i in range(0, self.n):
             self.nodes[(r, i)].removeAttacker(q)
             if i != r:
@@ -107,15 +110,28 @@ class Board:
             self.nodes[(tempR, tempC)].removeAttacker(q)
             tempR -= 1
             tempC += 1
-
+        q.setLocation(-1, -1)
     #       q.location[]
+    def printMiniBorad(self):
+        occupiedNodes = {}
+        for i in range(0, self.n):
+            q = self.queens[i]
+            if q.location.rowId != -1:
+                occupiedNodes[q.location.rowId] = q.location.colId
+        for i in range(0,self.n):
+            if i in occupiedNodes:
+                print(occupiedNodes[i], end=',')
+            else:
+                print('-', end=',')
+        print()
+
 
     def printBorad(self):
         occupiedNodes = {}
         for i in range(0, self.n):
             q = self.queens[i]
-            if q.location[0] != -1:
-                occupiedNodes[q.location] = q.id
+            if q.location.colId != -1:
+                occupiedNodes[(q.location.rowId,q.location.colId)] = q.id
         print('-', end='')
         for i in range(0, self.n):
             print('--' + str(i) + '-', end='')
@@ -128,3 +144,4 @@ class Board:
                 else:
                     print('   |', end='')
             print()
+

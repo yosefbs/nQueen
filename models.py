@@ -69,6 +69,12 @@ class NodeLocation:
     def __init__(self, rowId, colId):
         self.rowId = rowId
         self.colId = colId
+        a = self.rowId
+        b = self.colId
+        self.cantorPairing =int((a + b) * (a + b + 1) / 2 + a);
+
+    def __hash__(self):
+        return self.cantorPairing
 
     def __eq__(self, other):
         """Overrides the default implementation"""

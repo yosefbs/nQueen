@@ -16,8 +16,9 @@ def main():
     win = p.play(True)
     print(win)
     print(b.moveCounter)
-    while winCounter < 100:
-        print(str(winCounter) +'/'+str(playCounter))
+    numOfWinReq=1000
+    while winCounter < numOfWinReq:
+
         b = Board(8)
         p = Player(b)
         playCounter += 1
@@ -29,9 +30,9 @@ def main():
             print(b.moveCounter)
         totalMoves += b.moveCounter
     print()
-    print(playCounter)
-    print(totalMoves / 100)
-    print(totalWinGamesMoves / 100)
+    print('wins: '+ str(winCounter) + '/ play: ' + str(playCounter))
+    print(totalMoves / numOfWinReq)
+    print(totalWinGamesMoves / numOfWinReq)
     # print(len(b.freeNodes))
     # b.moveQueenToNode(0, 1, 2)
     # print(len(b.freeNodes))

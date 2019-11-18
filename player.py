@@ -3,32 +3,47 @@ from models import NodeLocation
 
 
 class Player:
-    def __init__(self, board, printSteps=False):
+    def __init__(self, board):
         self.board = board
         self.queensInds = list(range(board.n))
+        self.queensOnBoard = 0
         self.backTrackLogic = BacktrackLogic()
+        self.freeNodeCntHistory = []
+        self.freeNodeDictCntHistory = {}
 
     def play(self, printSteps=False):
-        self.printSteps = printSteps
         n = self.board.n
         board = self.board
         queensInds = self.queensInds
-        while len(board.freeNodes) > 0:
+
+        while len(board.freeNodes) >= len(queensInds):
             freeNodesLocations = list(map(lambda node: node.location, board.freeNodes))
+            cntFreeNode = len(freeNodesLocations)
+            if cntFreeNode not in self.freeNodeDictCntHistory:
+                self.freeNodeDictCntHistory[cntFreeNode] = 0
+            self.freeNodeDictCntHistory[cntFreeNode] += 1
+            self.freeNodeCntHistory.append(len(freeNodesLocations))
             usableNodes = list(set(freeNodesLocations) - set(self.backTrackLogic.dontUseLocation))
-            if len(usableNodes)==0:
+            if len(usableNodes) == 0:
                 break
             node = random.choice(usableNodes)
             board.moveQueenToNode(queensInds.pop(), node.rowId, node.colId)
-            if self.printSteps:
-                board.printMiniBorad()
+            curQueenOnBoard = board.n - len(queensInds)
+            if (curQueenOnBoard < self.queensOnBoard):
+                lastRemoved = self.backTrackLogic.dontUseLocation[-1]
+                self.backTrackLogic.dontUseLocation.clear()
+                self.backTrackLogic.dontUseLocation.append(lastRemoved)
+            self.queensOnBoard = curQueenOnBoard
+            if printSteps:
+                print('total free nodes:{0} usable free nodes:{1}'.format(len(freeNodesLocations), len(usableNodes)))
+                print(board.printMiniBorad())
             if len(queensInds) == 0:
                 return True
-        self.backTrackLogic.doBackTrack(board,queensInds)
 
         if board.moveCounter > 14:
             return False
-        return self.play(self.printSteps)
+        self.backTrackLogic.doBackTrack(board, queensInds)
+        return self.play(printSteps)
 
 
 class BacktrackLogic:
@@ -36,21 +51,6 @@ class BacktrackLogic:
         self.dontUseLocation = []
         # self.inBacktrack = False
         self.dontUsehistory = []
-
-    # def getUseableNode(self,freeNodes):
-    #     if (len(self.history) == 5) and (len(list(dict.fromkeys(self.history))) == 2):
-    #         return None
-    #
-    #     freeNodesLocations = list(map(lambda node:node.location,freeNodes))
-    #     usableNodes = list(set(freeNodesLocations) - set(self.dontUseLocation))
-    #     if len(usableNodes) == 0:
-    #         return None
-    #     self.dontUseLocation.clear()
-    #     if len(self.history)== 5:
-    #         self.history.pop()
-    #     selectedNode = random.choice(usableNodes)
-    #     self.history.insert(0,selectedNode)
-    #     return selectedNode
 
     def doBackTrack(self, board, queensInds):
         queenToRemoveInd = max(board.queens.keys(), key=(lambda k: len(board.queens[k].uniqueAttackableNode)))
@@ -64,6 +64,14 @@ class BacktrackLogic:
             self.dontUsehistory.pop()
             if self.dontUsehistory[0] == self.dontUsehistory[2] == self.dontUsehistory[4]:
                 self.dontUsehistory.pop()
-                self.doBackTrack(board,queensInds)
+                self.doBackTrack(board, queensInds)
         board.leaveNode(queenToRemove.id)
         return self.dontUseLocation
+
+    def noLogicBackTrack(self, board, queensInds):
+        queenOnBoard = list(set(board.queens.keys()) - set(queensInds))
+        queenToRemoveInds = random.choices(queenOnBoard, k=int(len(queenOnBoard) / 3))
+        for qInd in queenToRemoveInds:
+            queensInds.append(qInd)
+            board.leaveNode(qInd)
+        self.dontUseLocation.clear()

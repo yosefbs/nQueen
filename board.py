@@ -1,11 +1,10 @@
 from models import *
 
-
 class Board:
     def __init__(self, n):
-        self.freeNodes = []
-        self.nodes = {}
-        self.queens = {}
+        self.freeNodes = [] #nodes that not Threatened by any Queen
+        self.nodes = {} # all nodes in board
+        self.queens = {}# all queen
         self.n = n
         self.moveCounter=0
         for r in range(0, n):
@@ -17,13 +16,14 @@ class Board:
             self.queens[r] = Queen(r)
 
 
-    def moveQueenToNode(self, queenId, rowId, colId):
-        self.leaveNode(queenId)
-        self.queens[queenId].setLocation(rowId, colId)
-        self.moveCounter += 1
-        self.updateBoardAttackMap(queenId)
 
-    def updateBoardAttackMap(self, queenId):
+    def moveQueenToNode(self, queenId, rowId, colId):
+        self.leaveNode(queenId)  # remove queen from old node and update threaded nodes
+        self.queens[queenId].setLocation(rowId, colId) # set new location for queen
+        self.moveCounter += 1  # count a move
+        self.updateBoardAttackMap(queenId)  # update all nodes that Threatened by this queen
+
+    def updateBoardAttackMap(self, queenId):  # update all nodes that Threatened by this queen
         q = self.queens[queenId]
         r = q.location.rowId
         c = q.location.colId
@@ -111,7 +111,7 @@ class Board:
             tempR -= 1
             tempC += 1
         q.setLocation(-1, -1)
-    #       q.location[]
+
     def printMiniBorad(self):
         res = ''
         occupiedNodes = {}
@@ -126,7 +126,6 @@ class Board:
                 res += ('-,')
         res += ('\n')
         return res
-
 
     def printBorad(self):
         occupiedNodes = {}

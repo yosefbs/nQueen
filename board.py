@@ -113,6 +113,7 @@ class Board:
         q.setLocation(-1, -1)
     #       q.location[]
     def printMiniBorad(self):
+        res = ''
         occupiedNodes = {}
         for i in range(0, self.n):
             q = self.queens[i]
@@ -120,10 +121,11 @@ class Board:
                 occupiedNodes[q.location.rowId] = q.location.colId
         for i in range(0,self.n):
             if i in occupiedNodes:
-                print(occupiedNodes[i], end=',')
+                res+=(str(occupiedNodes[i])+',')
             else:
-                print('-', end=',')
-        print()
+                res += ('-,')
+        res += ('\n')
+        return res
 
 
     def printBorad(self):

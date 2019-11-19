@@ -10,7 +10,7 @@ class Player:  # Player Logic
         self.queensOnBoard = 0
         self.backTrackLogic = BacktrackLogic()
 
-#the play logic writen in PlayLogic.txt file
+#the play logic writen in PlayLogic.docx file
     def play(self, printSteps=False):
         n = self.board.n
         board = self.board
